@@ -1,43 +1,43 @@
-#include <iostream>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
-string encrypt(string text, string key) {
-    string result = "";
-    for (char c : text) {
-        if (isupper(c))
-            result += key[c - 'A'];
-        else if (islower(c))
-            result += tolower(key[c - 'a']);
-        else
-            result += c;
-    }
-    return result;
-}
-
-string decrypt(string text, string key) {
-    string reverseKey(26, ' ');
-    for (int i = 0; i < 26; i++)
-        reverseKey[toupper(key[i]) - 'A'] = 'A' + i;
-    string result = "";
-    for (char c : text) {
-        if (isupper(c))
-            result += reverseKey[c - 'A'];
-        else if (islower(c))
-            result += tolower(reverseKey[toupper(c) - 'A']);
-        else
-            result += c;
-    }
-    return result;
-}
-
 int main() {
-    string text = "HELLO WORLD";
-    string key  = "QWERTYUIOPASDFGHJKLZXCVBNM";
-    string encrypted = encrypt(text, key);
-    string decrypted = decrypt(encrypted, key);
-    cout << "Original : " << text << endl;
-    cout << "Encrypted: " << encrypted << endl;
-    cout << "Decrypted: " << decrypted << endl;
+    string all_letrs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    map<char, char> dict1;
+    int key = 4;
+
+    for (int i = 0; i < all_letrs.length(); i++) {
+        dict1[all_letrs[i]] = all_letrs[(i + key) % all_letrs.length()];
+    }
+
+    string plain_txt = "Hello World I am studying NS";
+    string cipher_txt;
+
+    for (char& c : plain_txt) {
+        if (dict1.find(c) != dict1.end())
+            cipher_txt += dict1[c];
+        else
+            cipher_txt += c;
+    }
+
+    cout << "Cipher Text is: " << cipher_txt << endl;
+
+    map<char, char> dict2;
+
+    for (int i = 0; i < all_letrs.length(); i++) {
+        dict2[all_letrs[i]] = all_letrs[(i - key + all_letrs.length()) % all_letrs.length()];
+    }
+
+    string decrypt_txt;
+
+    for (char& c : cipher_txt) {
+        if (dict2.find(c) != dict2.end())
+            decrypt_txt += dict2[c];
+        else
+            decrypt_txt += c;
+    }
+
+    cout << "Recovered plain text : " << decrypt_txt << endl;
+
     return 0;
 }
