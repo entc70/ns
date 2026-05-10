@@ -2,18 +2,19 @@
 using namespace std;
 
 string all_letrs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+int L = all_letrs.length();
 
 map<char, char> buildEncryptMap(int key) {
     map<char, char> dict;
-    for (int i = 0; i < all_letrs.length(); i++)
-        dict[all_letrs[i]] = all_letrs[(i + key) % all_letrs.length()];
+    for (int i = 0; i < L; i++)
+        dict[all_letrs[i]] = all_letrs[(i + key) % L];
     return dict;
 }
 
 map<char, char> buildDecryptMap(int key) {
     map<char, char> dict;
-    for (int i = 0; i < all_letrs.length(); i++)
-        dict[all_letrs[i]] = all_letrs[(i - key + all_letrs.length()) % all_letrs.length()];
+    for (int i = 0; i < L; i++)
+        dict[all_letrs[i]] = all_letrs[(i - key + L) % L];
     return dict;
 }
 
@@ -30,7 +31,7 @@ string applyMap(string text, map<char, char> dict) {
 
 int main() {
     int key = 4;
-    string plain_txt = "Hello World I am studying NS";
+    string plain_txt = "Hello World I Study NS";
 
     string cipher_txt  = applyMap(plain_txt,  buildEncryptMap(key));
     string decrypt_txt = applyMap(cipher_txt, buildDecryptMap(key));
