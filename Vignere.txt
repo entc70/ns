@@ -1,7 +1,3 @@
-================================================================
-CODE 3 - Vigenere Cipher - C++
-================================================================
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -20,7 +16,8 @@ string generateKey(string str, string key) {
 string cipherText(string str, string key) {
     string cipher_text;
     for (int i = 0; i < str.size(); i++) {
-        char x = (str[i] - 'A' + key[i] - 'A') % 26 + 'A';
+        char x = (str[i] + key[i]) % 26; 
+        x += 'A';
         cipher_text.push_back(x);
     }
     return cipher_text;
