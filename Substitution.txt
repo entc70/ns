@@ -1,43 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+string all_letrs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+map<char, char> buildEncryptMap(int key) {
+    map<char, char> dict;
+    for (int i = 0; i < all_letrs.length(); i++)
+        dict[all_letrs[i]] = all_letrs[(i + key) % all_letrs.length()];
+    return dict;
+}
+
+map<char, char> buildDecryptMap(int key) {
+    map<char, char> dict;
+    for (int i = 0; i < all_letrs.length(); i++)
+        dict[all_letrs[i]] = all_letrs[(i - key + all_letrs.length()) % all_letrs.length()];
+    return dict;
+}
+
+string applyMap(string text, map<char, char> dict) {
+    string result;
+    for (char& c : text) {
+        if (dict.find(c) != dict.end())
+            result += dict[c];
+        else
+            result += c;
+    }
+    return result;
+}
+
 int main() {
-    string all_letrs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    map<char, char> dict1;
     int key = 4;
-
-    for (int i = 0; i < all_letrs.length(); i++) {
-        dict1[all_letrs[i]] = all_letrs[(i + key) % all_letrs.length()];
-    }
-
     string plain_txt = "Hello World I am studying NS";
-    string cipher_txt;
 
-    for (char& c : plain_txt) {
-        if (dict1.find(c) != dict1.end())
-            cipher_txt += dict1[c];
-        else
-            cipher_txt += c;
-    }
+    string cipher_txt  = applyMap(plain_txt,  buildEncryptMap(key));
+    string decrypt_txt = applyMap(cipher_txt, buildDecryptMap(key));
 
-    cout << "Cipher Text is: " << cipher_txt << endl;
-
-    map<char, char> dict2;
-
-    for (int i = 0; i < all_letrs.length(); i++) {
-        dict2[all_letrs[i]] = all_letrs[(i - key + all_letrs.length()) % all_letrs.length()];
-    }
-
-    string decrypt_txt;
-
-    for (char& c : cipher_txt) {
-        if (dict2.find(c) != dict2.end())
-            decrypt_txt += dict2[c];
-        else
-            decrypt_txt += c;
-    }
-
-    cout << "Recovered plain text : " << decrypt_txt << endl;
+    cout << "Original Text    : " << plain_txt   << endl;
+    cout << "Cipher Text      : " << cipher_txt  << endl;
+    cout << "Recovered Text   : " << decrypt_txt << endl;
 
     return 0;
 }
