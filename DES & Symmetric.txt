@@ -1,0 +1,82 @@
+================================================================
+CODE 5 - DES - C++
+================================================================
+
+#include <iostream>
+using namespace std;
+
+// Hex to Binary
+string h2b(string s) {
+    string hex[] = {
+        "0000","0001","0010","0011",
+        "0100","0101","0110","0111",
+        "1000","1001","1010","1011",
+        "1100","1101","1110","1111"
+    };
+    string bin = "";
+    for (char c : s)
+        bin += (c <= '9') ? hex[c - '0'] : hex[c - 'A' + 10];
+    return bin;
+}
+
+// Binary to Hex
+string b2h(string s) {
+    string hex = "";
+    for (int i = 0; i < s.size(); i += 4) {
+        int x = 0;
+        for (int j = 0; j < 4; j++)
+            x = x * 2 + (s[i + j] - '0');
+        hex += (x < 10) ? char(x + '0') : char(x - 10 + 'A');
+    }
+    return hex;
+}
+
+// XOR
+string xo(string a, string b) {
+    string r = "";
+    for (int i = 0; i < a.size(); i++)
+        r += (a[i] == b[i]) ? '0' : '1';
+    return r;
+}
+
+
+string des(string pt, string k[]) {
+    string b = h2b(pt);
+    string l = b.substr(0, 32);
+    string r = b.substr(32, 32);
+
+    for (int i = 0; i < 4; i++) {
+        string newR = xo(l, xo(r, k[i]));  // F(R, K) = R XOR K, then XOR with L
+        l = r;
+        r = newR;
+        cout << "Round " << i + 1 << ": " << b2h(l) << " " << b2h(r) << endl;
+    }
+
+    return b2h(l + r);
+}
+
+int main() {
+    string pt  = "B40565B8DDC24868";
+    string key = h2b("AABB09182736CCDD");
+
+    string k[4];
+
+    // Generate 4 subkeys by rotating key left by 1 each round
+    for (int i = 0; i < 4; i++) {
+        key  = key.substr(1) + key[0];
+        k[i] = key.substr(0, 32);
+    }
+
+    cout << "Encryption:" << endl;
+    string cipher = des(pt, k);
+    cout << "Cipher Text: " << cipher << endl;
+
+    cout << "\nDecryption:" << endl;
+    string rk[4];
+    for (int i = 0; i < 4; i++)
+        rk[i] = k[3 - i];
+    string plain = des(cipher, rk);
+    cout << "Plain Text: " << plain << endl;
+
+    return 0;
+}

@@ -1,0 +1,63 @@
+================================================================
+CODE 6 - AES - C++
+================================================================
+
+#include <iostream>
+#include <string>
+#include <ctime>
+#include <cstdlib>
+using namespace std;
+
+string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+// Base64 Encode
+string base64(string s) {
+    string out;
+    int val = 0, bits = -6;
+    for (unsigned char c : s) {
+        val = (val << 8) + c;
+        bits += 8;
+        while (bits >= 0) {
+            out.push_back(chars[(val >> bits) & 63]);
+            bits -= 6;
+        }
+    }
+    if (bits > -6)
+        out.push_back(chars[((val << 8) >> (bits + 8)) & 63]);
+    while (out.size() % 4)
+        out.push_back('=');
+    return out;
+}
+
+// XOR Encrypt/Decrypt with IV
+string aes(string text, string key, string iv) {
+    for (int i = 0; i < text.size(); i++)
+        text[i] ^= key[i % key.size()] ^ iv[i % iv.size()];
+    return text;
+}
+
+int main() {
+    srand(time(0));
+
+    string text = "Hello i2it, this is AES encryption!";
+    string key  = "secret123";
+
+    cout << "Original Text: " << text << endl;
+
+    // Generate random IV
+    string iv = "";
+    for (int i = 0; i < 16; i++)
+        iv += char(rand() % 256);
+
+    // Encrypt
+    string encrypted = aes(text, key, iv);
+    cout << "\nEncrypted:" << endl;
+    cout << "IV        : " << base64(iv) << endl;
+    cout << "Ciphertext: " << base64(encrypted) << endl;
+
+    // Decrypt
+    string decrypted = aes(encrypted, key, iv);
+    cout << "\nDecrypted Text: " << decrypted << endl;
+
+    return 0;
+}
